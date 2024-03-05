@@ -103,6 +103,7 @@ $app->post('/register-post', function (ServerRequestInterface $request, Response
             ->withStatus(302);
     }
 
+    
     return $response->withHeader('Location', '/')
         ->withStatus(302);
 });
