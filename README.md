@@ -1,3 +1,5 @@
+<pre>
+
 # aut-reg-php-mysql-twig-slim
 aut-reg-php-mysql-twig-slim
 
@@ -82,3 +84,4 @@ services:
         }
     }
 }
+</pre>
