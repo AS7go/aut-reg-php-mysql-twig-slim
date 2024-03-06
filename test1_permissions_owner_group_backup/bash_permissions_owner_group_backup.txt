@@ -1,0 +1,38 @@
+--------------------------------------------
++++ ГРУППА И ВЛАДЕЛЕЦ БЄК АП
+--------------------------------------------
+
+# Создание копии прав доступа и владельца/группы
+getfacl -R test1 > permissions_backup.txt
+sudo find test1 -printf '%u:%g\n' > owner_group_backup.txt
+
+# Изменение прав доступа
+sudo chmod -R 777 test1
+
+# Восстановление прав доступа
+setfacl --restore=permissions_backup.txt
+
+# Восстановление владельца/группы и права доступа
+
+grep -oP '^owner:\K.*' permissions_backup.txt | cut -d: -f1 > owner_group_backup.txt
+=======================================================================================
+	Создание резервной копии прав доступа, группы и владельца:
+getfacl -R /путь/к/директории > permissions_owner_group_backup.txt
+ls -lR /путь/к/директории | awk '{print $3 ":" $4}' >> permissions_owner_group_backup.txt
+
+	Создание резервной копии прав доступа, группы и владельца:
+getfacl -R test1 > permissions_owner_group_backup.txt
+ls -lR test1 | awk '{print $3 ":" $4}' >> permissions_owner_group_backup.txt
+
+# Восстановление прав доступа
+setfacl --restore=permissions_owner_group_backup.txt
+
+# Восстановление владельца и группы
+cat permissions_owner_group_backup.txt | grep -vE '^#' | grep -vE '^default:' | while read line; do
+    owner=$(echo $line | awk -F ':' '{print $1}')
+    group=$(echo $line | awk -F ':' '{print $2}')
+    file=$(echo $line | awk -F ':' '{print $3}')
+    chown $owner:$group $file
+done
+
+======================================================================================================
