@@ -1,13 +1,20 @@
-<pre>
+### aut-reg-php-mysql-twig-slim
 
-# aut-reg-php-mysql-twig-slim
-aut-reg-php-mysql-twig-slim
+# PHP Регистрация и Авторизация с сессией. Полноценное приложение на PHP и MySQL, Twig, Slim
+## Первоисточник, последовательность, инструкция 
+## https://www.youtube.com/watch?v=8R8BvBbQFnk
+## Я сделал используя Docker, docker-compose.yml
+#### 1. Создаем в корневом каталоге файлы `Dockerfile, docker-compose.yml`.
+#### 2. Собираем, запускаем контейнеры `docker compose up --build -d`
+#### 3. Создаем `composer.json` командой `composer init`.
+#### 4. Заполняем `composer.json` по видео командами или по примеру.
+#### 5. Создаем базу данных и таблицу.
+#### --- Материал для инструкции ниже ---
 
-PHP Регистрация и Авторизация с сессией. Полноценное приложение на PHP и MySQL, Twig, Slim
-https://www.youtube.com/watch?v=8R8BvBbQFnk
 
---- Dockerfile ---
-
+Файл Dockerfile
+```Dockerfile
+# Dockerfile 
 # Use an official PHP runtime
 FROM php:8.2-apache
 
@@ -23,10 +30,10 @@ WORKDIR /var/www/html
 # Copy the source code in /www into the container at /var/www/html
 # COPY ../www .
 COPY . .
+```
 
-
---- docker-compose.yml ---
-
+Файл docker-compose.yml
+```yml
 version: '3.9'
 services:
   webserver:
@@ -46,8 +53,8 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: ale
-      MYSQL_USER: ale
+      MYSQL_DATABASE: login_register
+      MYSQL_USER: root
       MYSQL_PASSWORD: secret
     volumes:
       - ./mysql-data:/var/lib/mysql
@@ -64,9 +71,9 @@ services:
     environment:
       PMA_HOST: mysql-db
       MYSQL_ROOT_PASSWORD: secret
-
---- composer.json ---
-
+```
+Файл composer.json
+```json
 {
     "name": "aleksandr/aut-reg-php-mysql-twig-slim",
     "description": "Login and register with PHP and MySQL",
@@ -84,4 +91,42 @@ services:
         }
     }
 }
-</pre>
+```
+
+### команды для работы с контейнерами
+```yml
+  собрать запустить в фоновом режиме, только при сборке или после
+  изменений файлов конфигурации 
+docker compose up --build -d
+
+ОСНОВНЫЕ
+  запустить
+docker compose up -d
+  остановить
+docker compose down
+  посмотреть запущенные
+docker compose ps
+
+  зайти в контейнер
+docker exec -it <название контейнера> bash
+```
+
+### вход на сайт авторизации и аутентификации http://localhost:8000/
+### Управление базами данных phpmyadmin http://localhost:8081/
+#### лошин `root`
+#### пароль `secret`
+
+### Создаем базу данных login_register 
+```sql
+CREATE DATABASE IF NOT EXISTS `login_register` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `login_register`;
+```
+### Создаем таблицу с полями 
+```sql
+CREATE TABLE `user` (
+  `user_id` int UNSIGNED NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
